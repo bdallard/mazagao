@@ -57,25 +57,38 @@ class TweetListener(StreamListener):
 
 TwitterStream = Stream(auth, TweetListener())
 
-#number of tweets
-maximum_number_of_tweets_to_be_extracted = 10000
 
 #hashtag def 
 hashtag1 = "mazagan"
 hashtag2 = "mazagao"
 
-for tweet in tweepy.Cursor(api.search, q='#' + hashtag1, rpp=100).items(maximum_number_of_tweets_to_be_extracted):
-	with open('tweets_with_hashtag_' + hashtag1 + '.txt', 'a') as the_file:
-		the_file.write(str(tweet.text))
+maximum_number_of_tweets_to_be_extracted = 10000
 
-print ('Extracted ' + str(maximum_number_of_tweets_to_be_extracted) + ' tweets with hashtag #' + hashtag1)
+#test de sleep sur twitter 
+#c = tweepy.Cursor(api.search, q=search, include_entities=True).items()
 
+while True : 
+	try : 
+		#extract first hashtag and load into a txt file 
+		for tweet in tweepy.Cursor(api.search, q='#' + hashtag1, rpp=100).items(maximum_number_of_tweets_to_be_extracted):
+			with open('TEST_WithSleep_tweets_with_hashtag_' + hashtag1 + '.txt', 'a') as the_file: 
+				the_file.write(str(tweet.text))
 
-for tweet in tweepy.Cursor(api.search, q='#' + hashtag2, rpp=100).items(maximum_number_of_tweets_to_be_extracted):
-	with open('tweets_with_hashtag_' + hashtag2 + '.txt', 'a') as the_file:
-		the_file.write(str(tweet.text))
+		print ('Extracted ' + str(maximum_number_of_tweets_to_be_extracted) + ' tweets with hashtag #' + hashtag1)
+		
+		
+		#extract second hashtag and load into a txt file
+		for tweet in tweepy.Cursor(api.search, q='#' + hashtag2, rpp=100).items(maximum_number_of_tweets_to_be_extracted):
+			with open('tweets_with_hashtag_' + hashtag2 + '.txt', 'a') as the_file:
+				the_file.write(str(tweet.text))
 
-print ('Extracted ' + str(maximum_number_of_tweets_to_be_extracted) + ' tweets with hashtag #' + hashtag2)
+		print ('Extracted ' + str(maximum_number_of_tweets_to_be_extracted) + ' tweets with hashtag #' + hashtag2)
 
-
+	except tweepy.TweepError :
+		time.sleep(60 * 15)
+		print("Twitter API error | Attente")
+		continue 
+		
+	except StopIteration : 
+		break 
 
